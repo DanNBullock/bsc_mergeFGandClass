@@ -98,33 +98,41 @@ for iInputs=1:length(inputFGs)
             %if the mergedFG does exist, go ahead and append the current tract
             %with it.
             mergedFG.fibers=vertcat(mergedFG.fibers,toMergeFG.fibers);
-             mergedFG.name=strcat(mergedFG.name,toMergeFG.name);
+            mergedFG.name=strcat(mergedFG.name,toMergeFG.name);
+         
+
+            toMergeClassification.names=[];
+            toMergeClassification.index=[];
         end
+        
         
         %if the [iInputs]th entry in inputClassifications is not empty
         %either load it (if it is a string) or set toMergeclassification to that variable
         if ~isempty(inputClassifications{iInputs})
             if or(ischar(inputClassifications{iInputs}),inputClassifications(inputFGs{iInputs}))
-                toMergeclassification=load(inputClassifications{iInputs});
+                toMergeClassification=load(inputClassifications{iInputs});
             elseif isstruc(ischar(inputClassifications{iInputs}))
-                toMergeclassification=inputClassifications{iInputs};
+                toMergeClassification=inputClassifications{iInputs};
             else
                 warning('\n Input classification type not recognized for input %i',iInputs)
             end
             %merge it
-            mergedClassification = bsc_mergeClassifications(mergedClassification,toMergeclassification);
+            mergedClassification = bsc_mergeClassifications(mergedClassification,toMergeClassification);
         else
             %if the [iInputs]th entry in inputClassifications is empty,
             %just go ahead and make a single tract classification structure
             %for this fg.
-            toMergeclassification.names{1}=toMergeFG.name;
-            toMergeclassification.index(1:length(toMergeFG.fibers))=1;
-            
+            toMergeClassification.names{1}=toMergeFG.name;
+            toMergeClassification.index(1:length(toMergeFG.fibers),1)=1;
+
             %merge it
-            mergedClassification = bsc_mergeClassifications(mergedClassification,toMergeclassification);
+            mergedClassification = bsc_mergeClassifications(mergedClassification,toMergeClassification);
         end
        %merging can't go outside of the above conditinials, in order to prevent weird stuff from happening 
     end
+    
+    
+
     %end of input fg loop
 end
 %end of function
