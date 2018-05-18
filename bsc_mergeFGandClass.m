@@ -95,9 +95,10 @@ for iInputs=1:length(inputFGs)
             mergedClassification.names=[];
             mergedClassification.index=[];
         else
-            %if the mergedFG does exist, go ahead and the current tract
+            %if the mergedFG does exist, go ahead and append the current tract
             %with it.
-            mergedFG=fgMerge(mergedFG,toMergeFG);
+            mergedFG.fibers=vertcat(mergedFG.fibers,toMergeFG.fibers);
+             mergedFG.name=strcat(mergedFG.name,toMergeFG.name);
         end
         
         %if the [iInputs]th entry in inputClassifications is not empty
