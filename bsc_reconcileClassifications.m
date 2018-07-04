@@ -6,6 +6,7 @@ function [classification] = bsc_reconcileClassifications(baseClassification,clas
 % the same or different in the two classification structures.
 
 
+
 if ~length(baseClassification.index)==length(classificationAdd.index)
     warning('\n Classification reconciliation assumption violated: input classifications of different lengths')
 end
@@ -21,13 +22,17 @@ uniqueNamesTotal=unique(horzcat(baseNames,addNames),'stable');
 uniqueNamesLength=length(uniqueNamesTotal);
 
 classification.names=[];
-classification.index=zeros(length(baseClassification.index),1);
+%are there problems with setting the new clasification just equal to the
+%base?
+classification.index=baseClassification.index;
 
 
 if uniqueNamesLength==presumeNameNum
     %hyper inelegant, guarenteed to cause problems.
     classification.names=horzcat(baseNames,addNames);
     classificationAdd.index(classificationAdd.index>0)=classificationAdd.index(classificationAdd.index>0)+baseNameNum;
+    
+
     classification.index(classificationAdd.index>0)=classificationAdd.index(classificationAdd.index>0);
     
 else
