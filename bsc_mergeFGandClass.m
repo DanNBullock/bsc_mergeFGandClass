@@ -110,7 +110,7 @@ for iInputs=1:length(inputFGs)
             mergedFG.fibers=[];
         end
         
-        inputMergedFgLength=(mergedFG.fibers);
+        inputMergedFgLength=length(mergedFG.fibers);
         
         %if the fg is non empty, store the first streamline for fg
         %identification purposes, per Soichi's recommendation.
@@ -118,7 +118,7 @@ for iInputs=1:length(inputFGs)
         
         %now check to see if this streamline is equal to any others that
         %have been added to the amalgum
-        for iFgsDone=1:length(iInputs)
+        for iFgsDone=1:iInputs
             isEqualBool(iFgsDone)=isequal(streamlineIdentity{iInputs},streamlineIdentity{iFgsDone});
         end
         %In theory, this bool vector is empty in all cases except for the
@@ -177,9 +177,10 @@ for iInputs=1:length(inputFGs)
     
     if ~isempty(inputClassifications{iInputs})
         %probably breaks because of this?
-        if or(ischar(inputClassifications{iInputs}),inputClassifications(inputFGs{iInputs}))
+        
+        if ischar(inputClassifications{iInputs})
             toMergeclassification=load(inputClassifications{iInputs});
-        elseif isstruc(ischar(inputClassifications{iInputs}))
+        elseif isfield(inputClassifications{iInputs},'names')
             toMergeclassification=inputClassifications{iInputs};
         else
             warning('\n Input classification type not recognized for input %i',iInputs)
@@ -214,10 +215,12 @@ for iInputs=1:length(inputFGs)
         
         %in the amalgum fg structure, these streamlines correspond to the
         %current fg group, under the first streamline identity presumption
-        fgStreamsIndexes=find (sourceClassification.index==nameMapping);
+        fgStreamsIndexes=find (sourceClassification.index==nameMapping(iInputs));
         
         %set the entries in the bufferedMergeIndexVec to the appropriate
         %dictionary values
+        %dimension mismatch will cause error here.  If classification
+        %structure doesn't correspond, likely fail here.
         bufferedMergeIndexVec(fgStreamsIndexes)= toMergeclassification.index;
         
         %set the to merge index to this now modified and buffered
@@ -231,4 +234,6 @@ for iInputs=1:length(inputFGs)
         
         
     end
+end
+
 end
